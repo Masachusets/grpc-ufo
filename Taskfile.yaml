@@ -1,0 +1,57 @@
+version: '3'
+
+# Глобальные переменные проекта
+vars:
+  BUF_VERSION: 'v1.55.1'
+  PROTOC_GEN_GO_VERSION: 'v1.36.6'
+  PROTOC_GEN_GO_GRPC_VERSION: 'v1.36.6'
+
+  BIN_DIR: '{{.ROOT_DIR/bin}}'
+  BUF: '{{.ROOT_DIR/buf}}'
+  PROTOC_GEN_GO: '{{.ROOT_DIR/protoc-gen-go}}'
+  PROTOC_GEN_GO_GRPC: '{{.ROOT_DIR/protoc-gen-go-grpc}}'
+
+tasks:
+  default:
+    desc: Default task
+    cmds:
+      - echo "Taskfile is working"
+  
+  install-buf:
+    desc: "Устанавливает Buf в каталог bin"
+    cmds:
+      - |
+        mkdir -p {{.BIN_DIR}}
+        [ -f {{.BUF}} ] || {
+          echo '📦 Устанавливаем buf {{.BUF_VERSION}}...'
+          GOBIN={{.BIN_DIR}} go install github.com/bufbuild/buf/cmd/buf@{{.BUF_VERSION}}
+        }
+    status:
+      - test -x {{.BUF}}
+
+  proto:install-pluggins:
+    desc: "Устанавливает protoc плагины в каталог bin"
+    cmds:
+      - |
+        [ -f {{.PROTOC_GEN_GO}} ] || {
+          echo '📦 Устанавливаем protoc-gen-go {{.PROTOC_GEN_GO_VERSION}}...'
+          GOBIN={{.BIN_DIR}} go install google.golang.org/protobuf/cmd/protoc-gen-go@{{.PROTOC_GEN_GO_VERSION}}
+        }
+        [ -f {{.PROTOC_GEN_GO_GRPC}} ] || {
+          echo '📦 Устанавливаем protoc-gen-go-grpc {{.PROTOC_GEN_GO_GRPC_VERSION}}...'
+          GOBIN={{.BIN_DIR}} go install google.golang.org/protobuf/cmd/protoc-gen-go-grpc@{{.PROTOC_GEN_GO_GRPC_VERSION}}
+        }
+  
+  proto:lint:
+    deps: [ install-buf, proto:install-pluggins ]
+    desc: "Проверка .proto-файлов на соответствие стилю"
+    dir: proto
+    cmds:
+      - '{{.BUF}} lint'
+
+  proto:gen:
+    deps: [ install-buf, proto:install-pluggins, proto:lint ]
+    desc: "Генерация Go-кода из .proto"
+    dir: proto
+    cmds:
+      - '{{.BUF}} generate'
