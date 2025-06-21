@@ -4,12 +4,12 @@ version: '3'
 vars:
   BUF_VERSION: 'v1.55.1'
   PROTOC_GEN_GO_VERSION: 'v1.36.6'
-  PROTOC_GEN_GO_GRPC_VERSION: 'v1.73.0'
+  PROTOC_GEN_GO_GRPC_VERSION: 'v1.5.1'
 
   BIN_DIR: '{{.ROOT_DIR}}/bin'
-  BUF: '{{.ROOT_DIR}}/buf'
-  PROTOC_GEN_GO: '{{.ROOT_DIR}}/protoc-gen-go'
-  PROTOC_GEN_GO_GRPC: '{{.ROOT_DIR}}/protoc-gen-go-grpc'
+  BUF: '{{.BIN_DIR}}/buf'
+  PROTOC_GEN_GO: '{{.BIN_DIR}}/protoc-gen-go'
+  PROTOC_GEN_GO_GRPC: '{{.BIN_DIR}}/protoc-gen-go-grpc'
 
 tasks:
   default:
