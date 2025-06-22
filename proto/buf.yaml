@@ -2,6 +2,7 @@ version: v2
 lint:
   use:
     - STANDARD
+    - WIRE_JSON
     - COMMENT_ENUM
     - COMMENT_MESSAGE
   except:
