@@ -3,6 +3,7 @@ module github.com/Masachusets/grpc-ufo
 go 1.24.3
 
 require (
+	github.com/brianvoe/gofakeit/v7 v7.2.1
 	github.com/google/uuid v1.6.0
 	google.golang.org/grpc v1.73.0
 	google.golang.org/protobuf v1.36.6
