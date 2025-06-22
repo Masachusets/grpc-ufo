@@ -1,7 +1,7 @@
 version: v2
 lint:
   use:
-    - STANDART
+    - STANDARD
     - COMMENT_ENUM
     - COMMENT_MESSAGE
   except:
