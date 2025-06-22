@@ -16,6 +16,9 @@ service UFOService {
     
     // Get возвращает наблюдение НЛО по идентификатору
     rpc Get(GetRequest) returns (GetResponse);
+
+    // Get возвращает все наблюдения НЛО
+    rpc GetAll(GetAllRequest) returns (GetAllResponse);
     
     // Update обновляет существующее наблюдение НЛО
     rpc Update(UpdateRequest) returns (google.protobuf.Empty);
@@ -106,6 +109,15 @@ message GetRequest {
 message GetResponse {
   // sighting данные наблюдения
   Sighting sighting = 1;
+}
+
+// GetAllRequest запрос на получение всех наблюдений
+message GetAllRequest {}
+
+// GetAllResponse ответ с данными всех наблюдения
+message GetAllResponse {
+  // sighting данные наблюдения
+  repeated Sighting sighting = 1;
 }
 
 // UpdateRequest запрос на обновление наблюдения
