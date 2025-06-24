@@ -19,6 +19,7 @@ import (
 	"google.golang.org/protobuf/types/known/emptypb"
 	"google.golang.org/protobuf/types/known/timestamppb"
 
+	"github.com/Masachusets/grpc-ufo/pkg/interceptor"
 	ufo_v1 "github.com/Masachusets/grpc-ufo/pkg/proto/ufo/v1"
 )
 
@@ -146,8 +147,12 @@ func main() {
 		log.Fatalf("failed to listen: %v", err)
 	}
 
-	// Создаем gRPC сервер
-	s := grpc.NewServer()
+	// Создаем gRPC сервер с тайминг интерцептором
+	s := grpc.NewServer(
+		grpc.ChainUnaryInterceptor(
+			interceptor.TimingUnaryServerInterceptor(),
+		),
+	)
 
 	// Регистрируем наш сервис
 	service := &ufoService{

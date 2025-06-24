@@ -1,8 +1,9 @@
 version: v2
+deps:
+  - buf.build/bufbuild/protovalidate:v0.13.0
 lint:
   use:
     - STANDARD
-    - WIRE_JSON
     - COMMENT_ENUM
     - COMMENT_MESSAGE
   except:

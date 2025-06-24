@@ -5,11 +5,15 @@ vars:
   BUF_VERSION: 'v1.55.1'
   PROTOC_GEN_GO_VERSION: 'v1.36.6'
   PROTOC_GEN_GO_GRPC_VERSION: 'v1.5.1'
+  PROTOVALIDATE_VERSION: 'v0.13.3'
+  PROTOC_GEN_GRPC_GATEWAY_VERSION: 'v2.26.3'
 
   BIN_DIR: '{{.ROOT_DIR}}/bin'
   BUF: '{{.BIN_DIR}}/buf'
   PROTOC_GEN_GO: '{{.BIN_DIR}}/protoc-gen-go'
   PROTOC_GEN_GO_GRPC: '{{.BIN_DIR}}/protoc-gen-go-grpc'
+  PROTOVALIDATE: '{{.BIN_DIR}}/protovalidate'
+  PROTOC_GEN_GRPC_GATEWAY: '{{.BIN_DIR}}/protoc-gen-grpc-gateway'
 
 tasks:
   default:
@@ -41,6 +45,14 @@ tasks:
           echo '📦 Устанавливаем protoc-gen-go-grpc {{.PROTOC_GEN_GO_GRPC_VERSION}}...'
           GOBIN={{.BIN_DIR}} go install google.golang.org/grpc/cmd/protoc-gen-go-grpc@{{.PROTOC_GEN_GO_GRPC_VERSION}}
         }
+        # [ -f {{.PROTOVALIDATE}} ] || {
+        #   echo '📦 Устанавливаем protovalidate {{.PROTOVALIDATE_VERSION}}...'
+        #   GOBIN={{.BIN_DIR}} go install github.com/bufbuild/protovalidate/cmd/protovalidate@v0.13.3
+        # }
+        [ -f {{.PROTOC_GEN_GRPC_GATEWAY}} ] || {
+          echo '📦 Устанавливаем protoc-gen-grpc-gateway {{.PROTOC_GEN_GO_GRPC_VERSION}}...'
+          GOBIN={{.BIN_DIR}} go install github.com/grpc-ecosystems/grpc-gateway/v2/protoc-gen-grpc-gateway@{{.PROTOC_GEN_GO_GRPC_VERSION}}
+        }
   
   proto:lint:
     deps: [ install-buf, proto:install-pluggins ]
@@ -49,8 +61,17 @@ tasks:
     cmds:
       - '{{.BUF}} lint'
 
+  proto:update-deps:
+    deps: [ install-buf ]
+    desc: "Обновление зависимостей protobuf из удаленных репозиториев (googleapis и т.д.)"
+    dir: proto
+    cmds:
+      - |
+        echo "🔄 Обновляем зависимости buf..."
+        '{{.BUF}} dep update'
+
   proto:gen:
-    deps: [ install-buf, proto:install-pluggins, proto:lint ]
+    deps: [ install-buf, proto:install-pluggins, proto:update-deps, proto:lint ]
     desc: "Генерация Go-кода из .proto"
     dir: proto
     cmds:
